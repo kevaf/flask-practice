@@ -23,7 +23,6 @@ Jinja2==3.0.1
 Mako==1.1.5
 markdown2==2.4.1
 MarkupSafe==2.0.1
-pkg_resources==0.0.0
 psycopg2==2.9.1
 SQLAlchemy==1.4.23
 visitor==0.1.3
