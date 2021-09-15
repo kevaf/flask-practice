@@ -4,8 +4,9 @@ from ..request import get_movies,get_movie, search_movie
 from flask import render_template,request,redirect,url_for, abort
 from .forms import ReviewForm, UpdateProfile
 from ..models import Review, User
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .. import db, photos
+import markdown2
 
 Review = Review
 
@@ -56,6 +57,14 @@ def search(movie_name):
     title = f'search results for {movie_name}'
     return render_template('search.html',movies = searched_movies)
 
+@main.route('/review/<int:id>')
+def single_review(id):
+    review=Review.query.get(id)
+    if review is None:
+        abort(404)
+    format_review = markdown2.markdown(review.movie_review,extras=["code-friendly", "fenced-code-blocks"])
+    return render_template('review.html',review = review,format_review=format_review)
+
 @main.route('/movie/review/new/<int:id>', methods = ['GET','POST'])
 @login_required
 def new_review(id):
@@ -65,9 +74,12 @@ def new_review(id):
     if form.validate_on_submit():
         title = form.title.data
         review = form.review.data
-        new_review = Review(movie.id,title,movie.poster,review)
+        # Updated review instance
+        new_review = Review(movie_id=movie.id,movie_title=title,image_path=movie.poster,movie_review=review,user=current_user)
+
+        # save review method
         new_review.save_review()
-        return redirect(url_for('main.movie',id = movie.id ))
+        return redirect(url_for('.movie',id = movie.id ))
 
     title = f'{movie.title} review'
     return render_template('new_review.html',title = title, review_form=form, movie=movie)

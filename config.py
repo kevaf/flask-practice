@@ -16,6 +16,10 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
+    # simple mde  configurations
+    SIMPLEMDE_JS_IIFE = True
+    SIMPLEMDE_USE_CDN = True
+    
 class ProdConfig(Config):
     '''
     Production  configuration child class
@@ -37,7 +41,15 @@ class DevConfig(Config):
 
     DEBUG = True
 
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://moringa:kev2214@localhost/watchlist_test'
+
+class DevConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://moringa:kev2214@localhost/watchlist'
+    DEBUG = True
+
 config_options = {
 'development':DevConfig,
-'production':ProdConfig
-}   
+'production':ProdConfig,
+'test':TestConfig
+}
